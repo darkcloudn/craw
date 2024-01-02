@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Custom Search</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    .result {
+      margin-bottom: 20px;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .link {
+      color: #1a0dab;
+    }
+  </style>
+</head>
+<body>
+  <h1>Google Custom Search Results</h1>
+
+  <label for="searchInput">Enter search query:</label>
+  <input type="text" id="searchInput" />
+  <button onclick="searchGoogle()">Search</button>
+
+  <div id="results"></div>
+
+  <script>
+    function searchGoogle() {
+        const apiKey = 'AIzaSyBOENs-8DK3rcc2b9k-UQy8Pt7-ZdcG34o';
+  const cx = '85aee0216988a4b79';
+  const query = document.getElementById('searchInput').value;
+
+  const numResultsPerPage = 10;
+  const totalResults = 100;
+  const numPages = Math.ceil(totalResults / numResultsPerPage);
+
+  const resultsContainer = document.getElementById('results');
+  resultsContainer.innerHTML = ''; // Clear previous results
+
+  // Lặp qua từng trang
+  for (let page = 1; page <= numPages; page++) {
+    const start = (page - 1) * numResultsPerPage + 1;
+
+    const url = `https://www.googleapis.com/customsearch/v1?q=${query}&key=${apiKey}&cx=${cx}&start=${start}&num=${numResultsPerPage}`;
+
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+
+        // Xử lý dữ liệu trả về theo ý muốn của bạn
+        data.items.forEach(item => {
+          const title = item.title || '';
+          const link = item.link || '';
+
+          const resultDiv = document.createElement('div');
+          resultDiv.classList.add('result');
+
+          const titleElement = document.createElement('div');
+          titleElement.classList.add('title');
+          titleElement.textContent = title;
+
+          const linkElement = document.createElement('a');
+          linkElement.classList.add('link');
+          linkElement.href = link;
+          linkElement.textContent = link;
+
+          resultDiv.appendChild(titleElement);
+          resultDiv.appendChild(linkElement);
+
+          resultsContainer.appendChild(resultDiv);
+        });
+      })
+      .catch(error => console.error('Error:', error));
+  }
+    }
+  </script>
+</body>
+</html>
